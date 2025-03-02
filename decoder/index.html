@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Architect's Decoder | Decoding Death</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+        }
+        .terminal {
+            max-width: 600px;
+            margin: 40px auto;
+            border: 1px solid #0f0;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        input {
+            background-color: #000;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 8px;
+            width: calc(100% - 18px);
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+        }
+        .output {
+            margin-top: 20px;
+            min-height: 100px;
+            white-space: pre-line;
+        }
+        .blink {
+            animation: blink-animation 1s steps(5, start) infinite;
+        }
+        @keyframes blink-animation {
+            to {
+                visibility: hidden;
+            }
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div>>> ARCHITECT DECRYPTION SYSTEM v2.3</div>
+        <div>>> AUTHORIZED ACCESS ONLY</div>
+        <div>>> ENTER DECRYPTION KEY SEQUENCE</div>
+        <div class="blink">>></div>
+
+        <input type="text" id="decoder-input" placeholder="Enter sequence...">
+
+        <div class="output" id="output"></div>
+        
+        <div id="player-id" class="hidden"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('decoder-input');
+            const output = document.getElementById('output');
+            const playerIdEl = document.getElementById('player-id');
+            
+            // Check for player parameter in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const playerEmail = urlParams.get('player');
+            
+            if (playerEmail) {
+                playerIdEl.textContent = playerEmail;
+            } else {
+                // Try to get from localStorage if no parameter
+                const storedEmail = localStorage.getItem('player_email');
+                if (storedEmail) {
+                    playerIdEl.textContent = storedEmail;
+                }
+            }
+            
+            // Pre-defined keys and responses
+            const keys = {
+                "LOOK-BENEATH-THE-SURFACE": {
+                    response: ">> DECRYPTION SUCCESSFUL\n>> FIRST TEST PASSED\n>> THE ARCHITECT ACKNOWLEDGES YOUR POTENTIAL",
+                    isCorrect: true
+                },
+                "RIVER23CLOCK": {
+                    response: ">> DECRYPTION SUCCESSFUL\n>> COORDINATES DECODED: 41°24'12.2\"N 2°10'26.5\"E\n>> LOCATION IDENTIFIED: THE CLOCK TOWER BY THE RIVER",
+                    isCorrect: true
+                },
+                "JUSTICE-DELAYED": {
+                    response: ">> DECRYPTION SUCCESSFUL\n>> SUBJECT IDENTITY CONFIRMED: KATHERINE MILLS\n>> AGE: 28\n>> PROFESSION: JOURNALIST\n>> INVESTIGATING: THE CHAMBERS CASE",
+                    isCorrect: true
+                },
+                "PATTERN-SEVEN-THREE": {
+                    response: ">> DECRYPTION SUCCESSFUL\n>> ACCESS GRANTED TO LEVEL 2 FILES\n>> NEW EVIDENCE AVAILABLE AT EVIDENCE SITE",
+                    isCorrect: true
+                },
+                "TJNF JT B SJWFS UIBU DBSSJFT BMM UIJOHT BXBZ": {
+                    response: ">> DECRYPTION SUCCESSFUL\n>> CAESAR CIPHER DECODED\n>> MESSAGE: TIME IS A RIVER THAT CARRIES ALL THINGS AWAY",
+                    isCorrect: true
+                }
+            };
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const value = input.value.trim().toUpperCase();
+                    const playerEmail = playerIdEl.textContent;
+
+                    // Simulate "thinking"
+                    output.innerHTML = ">> PROCESSING...";
+
+                    setTimeout(() => {
+                        let isCorrect = false;
+                        let response = ">> INVALID KEY\n>> ACCESS DENIED";
+                        
+                        if (keys[value]) {
+                            response = keys[value].response;
+                            isCorrect = keys[value].isCorrect || false;
+                        }
+                        
+                        output.innerHTML = response;
+                        
+                        // Record the usage if player is identified
+                        if (playerEmail) {
+                            recordDecoderUse(playerEmail, value, isCorrect);
+                        }
+                        
+                    }, 1500);
+
+                    input.value = '';
+                }
+            });
+            
+            // Record decoder use
+            async function recordDecoderUse(playerEmail, input, isCorrect) {
+                try {
+                    const response = await fetch('https://decoding-death-backend.vercel.app/api/external/decoder-use', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            playerEmail,
+                            input,
+                            isCorrect
+                        })
+                    });
+                    
+                    // We don't need to do anything with the response
+                    console.log('Decoder use recorded');
+                } catch (error) {
+                    console.error('Error recording decoder use:', error);
+                }
+            }
+            
+            // Store player email in localStorage if in URL
+            if (playerEmail) {
+                localStorage.setItem('player_email', playerEmail);
+            }
+        });
+    </script>
+</body>
+</html>
