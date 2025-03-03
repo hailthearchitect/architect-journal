@@ -178,6 +178,7 @@ layout: default
     #input-field {
         background: transparent;
         border: none;
+        flex-grow: 1;
         color: var(--primary-green);
         font-family: 'VT323', monospace;
         font-size: 20px;
@@ -185,7 +186,11 @@ layout: default
         outline: none;
         text-shadow: 0 0 5px rgba(0, 255, 0, 0.4);
     }
-
+        
+    .input-line {
+    display: flex;
+    align-items: center;
+}
     /* Rest of the previous styles remain the same */
     /* Scrollbar styling, choice buttons, etc. */
     .scrollable-content::-webkit-scrollbar {
@@ -282,14 +287,14 @@ layout: default
                 <p>>> </p>
                 <p>>> DECRYPTION KEY REQUIRED TO ACCESS FULL PROTOCOL</p>
                 <div class="input-line">
-                    <span>>> </span>
-                    <input type="text" id="input-field" autocomplete="off" autofocus>
-                    <span class="cursor"></span>
-                </div>
-                <div id="response-area"></div>
-            </div>
-            <div class="countdown" id="countdown">00:00:00</div>
+            <span>>> </span>
+            <input type="text" id="input-field" autocomplete="off" autofocus>
+            <div class="cursor"></div>
         </div>
+        <div id="response-area"></div>
+    </div>
+    <div class="countdown" id="countdown">00:00:00</div>
+</div>
 
         <!-- Map Overlay -->
     <div class="map-overlay" id="map-overlay">
