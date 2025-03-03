@@ -173,6 +173,7 @@
             z-index: 4;
             border-bottom: 1px solid var(--primary-green);
             padding-bottom: 5px;
+            padding-right: 110px; /* Make room for countdown */
         }
 
         .terminal-content {
@@ -355,7 +356,7 @@
         .settings-btn {
             position: absolute;
             top: 10px;
-            right: 10px;
+            right: 125px; /* Moved to the left of the countdown */
             background: transparent;
             border: none;
             color: var(--primary-green);
@@ -373,7 +374,7 @@
         .settings-panel {
             position: absolute;
             top: 40px;
-            right: 10px;
+            right: 125px; /* Aligned with settings button */
             background: rgba(0, 10, 0, 0.9);
             border: 1px solid var(--primary-green);
             padding: 10px;
@@ -450,7 +451,7 @@
         /* CRT Power buttons */
         .power-controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 15px;
             right: 20px;
             display: flex;
             gap: 15px;
@@ -474,6 +475,28 @@
 
         .power-off {
             background-color: transparent;
+        }
+
+        /* Button tooltips */
+        .power-btn::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--primary-green);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .power-btn:hover::after {
+            opacity: 1;
         }
 
         /* Hidden player ID element */
@@ -510,8 +533,8 @@
         <div class="path-indicator" id="path-indicator">PATH: INITIALIZING...</div>
         
         <div class="power-controls">
-            <div class="power-btn power-on" title="Power"></div>
-            <div class="power-btn power-off" title="Reset"></div>
+            <div class="power-btn power-on" data-tooltip="Power On" title="Power"></div>
+            <div class="power-btn power-off" data-tooltip="System Reset" title="Reset"></div>
         </div>
         
         <button class="settings-btn">⚙</button>
@@ -723,14 +746,8 @@
                             }, 1000);
                             
                             setTimeout(() => {
-                                // For a real implementation, redirect to completion
-                                // Window.location.href = `completion.html?path=${currentPath}&success=true`;
-                                
-                                // For now, just show success message
-                                const finalMsg = document.createElement('p');
-                                finalMsg.className = 'success';
-                                finalMsg.textContent = ">> TRANSMISSION COMPLETE. CHECK YOUR EMAIL.";
-                                responseArea.appendChild(finalMsg);
+                                // Redirect to completion page
+                                window.location.href = `completion.html?path=${currentPath}&player=${encodeURIComponent(playerEmail)}`;
                             }, 3000);
                         }
                     }
