@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transmission Complete</title>
+    <style>
+        /* Base Font Setup */
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --primary-green: #0F0;
+            --dark-green: #006600;
+            --primary-green-glow: rgba(0, 255, 0, 0.4);
+            --error-red: #F00;
+            --warning-yellow: #FF0;
+            --crt-base: #000F00;
+            --crt-shadow: #000500;
+            --scan-line-color: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'VT323', monospace;
+            color: var(--primary-green);
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0,10,0,0.1) 0%, rgba(0,0,0,0.4) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .terminal {
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            background-color: var(--crt-base);
+            border: 2px solid var(--primary-green);
+            box-shadow: 
+                0 0 10px var(--primary-green-glow),
+                inset 0 0 15px var(--crt-shadow);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-radius: 15px;
+            transform: perspective(800px) rotateX(2deg);
+            z-index: 2;
+        }
+
+        /* CRT Screen Effects */
+        .terminal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                /* Scan lines */
+                repeating-linear-gradient(
+                    0deg,
+                    var(--scan-line-color),
+                    var(--scan-line-color) 1px,
+                    transparent 1px,
+                    transparent 2px
+                ),
+                /* Screen curvature */
+                radial-gradient(
+                    ellipse at center,
+                    rgba(0,20,0,0) 0%,
+                    rgba(0,5,0,0.2) 100%
+                );
+            pointer-events: none;
+            opacity: 1;
+            z-index: 2;
+        }
+
+        /* Screen flicker and noise */
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { 
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes noise {
+            0%, 100% { background-position: 0 0; }
+            10% { background-position: -5% -10%; }
+            20% { background-position: -15% 5%; }
+            30% { background-position: 7% -25%; }
+            40% { background-position: -5% 25%; }
+            50% { background-position: 15% 10%; }
+            60% { background-position: -10% 15%; }
+            70% { background-position: 3% -30%; }
+            80% { background-position: -15% 20%; }
+            90% { background-position: 10% 5%; }
+        }
+
+        .terminal::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(
+                    rgba(18, 16, 16, 0) 50%,
+                    rgba(0, 0, 0, 0.25) 50%
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255, 0, 0, 0.06),
+                    rgba(0, 255, 0, 0.02),
+                    rgba(0, 0, 255, 0.06)
+                );
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            opacity: 0.1;
+            z-index: 3;
+            animation: 
+                noise 3s steps(10) infinite,
+                flicker 5s infinite;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 18px;
+            position: relative;
+            z-index: 4;
+            border-bottom: 1px solid var(--primary-green);
+            padding-bottom: 5px;
+        }
+
+        .content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 4;
+            text-align: center;
+            font-size: 24px;
+            line-height: 1.5;
+        }
+
+        .success-icon {
+            font-size: 48px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        h1 {
+            color: var(--primary-green);
+            margin-bottom: 20px;
+            font-size: 36px;
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--primary-green-glow);
+        }
+
+        p {
+            margin-bottom: 15px;
+            max-width: 80%;
+            text-shadow: 0 0 5px var(--primary-green-glow);
+        }
+
+        .hero-message, .join-message, .authority-message {
+            display: none;
+        }
+
+        .button {
+            margin-top: 30px;
+            background: transparent;
+            border: 2px solid var(--primary-green);
+            color: var(--primary-green);
+            padding: 10px 20px;
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .button:hover {
+            background-color: var(--dark-green);
+            color: #000;
+            box-shadow: 0 0 10px var(--primary-green-glow);
+        }
+
+        /* Typing animation */
+        .typing {
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: 0.1em;
+            animation: typing 3.5s steps(40, end);
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        /* Random noise effect */
+        .noise-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0.05;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAA1BMVEX///+nxBvIAAAAIklEQVRYhe3BMQEAAADCIPunNsYeYAAAAAAAAAAAAABwBj5AAAF35ETcAAAAAElFTkSuQmCC');
+            animation: noise 0.2s steps(2) infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="noise-effect"></div>
+        <div class="terminal-header">
+            <span>ARCHITECT DECRYPTION SYSTEM v3.1</span>
+            <span>TRANSMISSION COMPLETE</span>
+        </div>
+        <div class="content">
+            <div class="success-icon">✓</div>
+            <h1 class="typing">Decryption Successful</h1>
+            
+            <!-- Path-specific messages -->
+            <div id="hero-message" class="hero-message">
+                <p>Coordinates verified. Code sequence accepted.</p>
+                <p>Mercy protocol initiated. Subject location transmitted.</p>
+                <p>The Architect has received your solution and will respond shortly.</p>
+                <p>Check your email for confirmation.</p>
+            </div>
+            
+            <div id="join-message" class="join-message">
+                <p>Access granted to secure channel.</p>
+                <p>Identities confirmed. Partnership established.</p>
+                <p>The Architect has received your declaration and will respond shortly.</p>
+                <p>Check your email for further instructions.</p>
+            </div>
+            
+            <div id="authority-message" class="authority-message">
+                <p>Location data decoded. Rescue window calculated.</p>
+                <p>Anonymous transmission sent to authorities.</p>
+                <p>The Architect has acknowledged your intervention.</p>
+                <p>Check your email for final communication.</p>
+            </div>
+            
+            <button class="button" onclick="window.close()">Close Terminal</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get path from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const path = urlParams.get('path') || 'hero_path';
+            const playerEmail = urlParams.get('player');
+            
+            // Show the correct message based on path
+            if (path === 'hero_path') {
+                document.getElementById('hero-message').style.display = 'block';
+            } else if (path === 'join_path') {
+                document.getElementById('join-message').style.display = 'block';
+            } else if (path === 'authority_path') {
+                document.getElementById('authority-message').style.display = 'block';
+            }
+            
+            // Record completion if player email is provided
+            if (playerEmail) {
+                try {
+                    fetch('https://decoding-death-backend.vercel.app/api/external/decoder-use', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            playerEmail,
+                            input: 'COMPLETION',
+                            isCorrect: true,
+                            details: { path }
+                        })
+                    });
+                } catch (error) {
+                    console.error('Error recording completion:', error);
+                }
+            }
+            
+            // Add random glitch effects
+            function addRandomGlitch() {
+                if (Math.random() < 0.03) { // 3% chance of glitch
+                    const terminal = document.querySelector('.terminal');
+                    const glitch = document.createElement('div');
+                    glitch.style.position = 'absolute';
+                    glitch.style.top = `${Math.random() * 100}%`;
+                    glitch.style.left = 0;
+                    glitch.style.width = '100%';
+                    glitch.style.height = '2px';
+                    glitch.style.backgroundColor = 'rgba(0, 255, 0, 0.5)';
+                    glitch.style.zIndex = 10;
+                    terminal.appendChild(glitch);
+                    
+                    setTimeout(() => {
+                        glitch.remove();
+                    }, 150);
+                }
+            }
+            
+            // Add glitches every second
+            setInterval(addRandomGlitch, 1000);
+        });
+    </script>
+</body>
+</html>
