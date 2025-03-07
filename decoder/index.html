@@ -352,11 +352,11 @@
             border: 2px solid var(--primary-green);
         }
 
-        /* Settings button and panel */
+        /* Settings button and panel - FIXED POSITIONING */
         .settings-btn {
             position: absolute;
             top: 10px;
-            right: 125px; /* Moved to the left of the countdown */
+            right: 80px; /* Positioned to the right of the countdown */
             background: transparent;
             border: none;
             color: var(--primary-green);
@@ -365,6 +365,10 @@
             z-index: 10;
             opacity: 0.5;
             transition: opacity 0.3s ease;
+            width: 30px; /* Fixed width */
+            height: 30px; /* Fixed height */
+            text-align: center;
+            line-height: 30px;
         }
 
         .settings-btn:hover {
@@ -374,7 +378,7 @@
         .settings-panel {
             position: absolute;
             top: 40px;
-            right: 125px; /* Aligned with settings button */
+            right: 80px; /* Aligned with settings button */
             background: rgba(0, 10, 0, 0.9);
             border: 1px solid var(--primary-green);
             padding: 10px;
@@ -390,6 +394,7 @@
             gap: 5px;
             color: var(--primary-green);
             font-size: 16px;
+            white-space: nowrap; /* Prevent text wrapping */
         }
 
         /* Fancy checkbox for color scheme */
