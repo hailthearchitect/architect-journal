@@ -2,7 +2,7 @@
   "status": "online",
   "site": "architect-journal",
   "timestamp": "2025-03-11T18:47:00Z",
-  "version": "1.0.0",
+  "version": "1.0.01",
   "components": [
     {
       "name": "blog",
