@@ -1,0 +1,19 @@
+{
+  "status": "online",
+  "site": "architect-journal",
+  "timestamp": "2025-03-11T18:47:00Z",
+  "version": "1.0.0",
+  "components": [
+    {
+      "name": "blog",
+      "status": "active",
+      "description": "Dynamic blog content adapting to player's psychological profile"
+    },
+    {
+      "name": "decoder",
+      "status": "active",
+      "description": "Interactive puzzle-solving interface for game progression"
+    }
+  ],
+  "backendConnection": true
+}
